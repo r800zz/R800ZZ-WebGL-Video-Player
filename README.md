@@ -39,6 +39,18 @@ The web application is available at vr180g.com
 - Thai: videoplayer_webgl_th.html  
 - Chinese: videoplayer_webgl_zh.html
 
+## How to Use Offline
+On desktop operating systems, this can be used offline.  
+(It may not work on mobile OS.)  
+
+For example, if you place the HTML file in `"C:\web\"` on Microsoft Windows 11,  
+you can access it by entering the following in the web browser’s URL bar:  
+`file:///C:/web/videoplayer_webgl_en.html`  
+
+On Microsoft Windows with Edge/Chrome, you can also enter:  
+`C:\web\videoplayer_webgl_en.html`
+
+
 ## Multilingual Processing
 This repository distributes one HTML file for each language.  
 The original source code is a single PHP file that outputs HTML for each language.  
