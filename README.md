@@ -9,6 +9,8 @@ HTML/JavaScript Video player. Supports displaying only the left side of SBS vide
 - PICO 4 Ultra + R800ZZ Browser(This browser is not yet released.)
 - Windows 11 PC + Firefox/Edge/Chrome
 
+![Demo Animation](webglplayer.gif)
+
 ## Libraries Used
 Three.js
 
