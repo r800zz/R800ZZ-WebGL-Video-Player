@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>R800ZZ WebGL Video Player</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+#fileInputWrapper a {
+  color: #66b3ff;
+  text-decoration: none;
+}
+
+#fileInputWrapper a:hover {
+  text-decoration: underline;
+}
+#fileInputWrapper {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  font-family: sans-serif;
+}
+#videoInput {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+#centerText {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  z-index: 3;
+  pointer-events: none;
+  font-family: sans-serif;
+}
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+#controls {
+  position: absolute;
+  bottom: 0px;
+  left: 0%;
+  transform: translateX(0%);
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 10px;
+  border-radius: 8px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+#controls button, #controls input[type="range"] {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+#volumeStr{
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 16px;
+  z-index: 10;
+}
+#timeDisplay {
+  display: inline-block;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 16px;
+  z-index: 10;
+}
+#volumeSlider {
+  width: 100px;
+}
+  </style>
+<link rel="alternate" hreflang="ru" href="https://vr180g.com/videoplayer/videoplayer_webgl.php?l=ru">
+<link rel="alternate" hreflang="es" href="https://vr180g.com/videoplayer/videoplayer_webgl.php?l=es">
+<link rel="alternate" hreflang="th" href="https://vr180g.com/videoplayer/videoplayer_webgl.php?l=th">
+<link rel="alternate" hreflang="zh" href="https://vr180g.com/videoplayer/videoplayer_webgl.php?l=cn">
+<link rel="alternate" hreflang="ko" href="https://vr180g.com/videoplayer/videoplayer_webgl.php?l=kr">
+<link rel="alternate" hreflang="ja" href="https://vr180g.com/videoplayer/videoplayer_webgl.php?l=jp">
+<link rel="alternate" hreflang="en" href="https://vr180g.com/videoplayer/videoplayer_webgl.php?l=en">
+</head>
+<body>
+<div id="fileInputWrapper">
+<label><input type="checkbox" id="halfViewToggle">왼쪽만 표시</label>
+<label><input type="checkbox" id="loopToggle" checked>반복</label>
+<label for="videoInput">비디오<input type="file" id="videoInput"></label>
+<a href="https://vr180g.com/?l=kr" target="_blank">vr180g.com</a>2026년7월16일 업데이트
+</div>
+<div id="centerText">R800ZZ WebGL Video Player 0.3</div>
+<div id="controls">
+  <button id="playBtn">▶️</button>
+  <input type="range" id="seekBar" min="0" max="100" value="0">
+<div id="timeDisplay">0:00:00 / 0:00:00</div>
+<div id="volumeStr">볼륨</div><input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+<button id="fullscreenBtn">전체 화면</button>
+</div>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js"
+        }
+      }
+    </script>
+  <script type="module">
+    import * as THREE from 'three';
+    let scene, camera, renderer, mesh, video, texture;
+    init();
+    function init() {
+      scene = new THREE.Scene();
+      camera = new THREE.OrthographicCamera();
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      document.body.appendChild(renderer.domElement);
+      const txtFullScreen = "전체 화면";
+      const txtEndFullScreen = "전체 화면 종료";
+      window.addEventListener('resize', onWindowResize);
+      document.getElementById('fullscreenBtn').addEventListener('click', () => {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+          if (document.body.requestFullscreen) {
+            document.body.requestFullscreen();
+          } else if (document.body.webkitRequestFullscreen) {
+            document.body.webkitRequestFullscreen();
+          } else if (document.body.msRequestFullscreen) {
+            document.body.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+      });
+      const handleFullscreenChange = () => {
+        const btn = document.getElementById('fullscreenBtn');
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+          btn.textContent = txtEndFullScreen;
+        } else {
+          btn.textContent = txtFullScreen;
+        }
+      };
+      document.addEventListener('fullscreenchange', handleFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.addEventListener('msfullscreenchange', handleFullscreenChange);
+      document.getElementById('halfViewToggle').addEventListener('change', () => {
+        if (!video || !mesh) return;
+        updateMeshSize();
+      });
+      document.getElementById('loopToggle').addEventListener('change', () => {
+        if (!video) return;
+        video.loop = document.getElementById('loopToggle').checked;
+      });
+      document.getElementById('volumeSlider').addEventListener('input', (e) => {
+        if (video) {
+          video.volume = parseFloat(e.target.value);
+        }
+      });
+      onWindowResize();
+      animate();
+    }
+    function onWindowResize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
+      camera.left = -width / 2;
+      camera.right = width / 2;
+      camera.top = height / 2;
+      camera.bottom = -height / 2;
+      camera.near = -1000;
+      camera.far = 1000;
+      camera.updateProjectionMatrix();
+      if (mesh && video.videoWidth && video.videoHeight) {
+        updateMeshSize();
+      }
+    }
+function updateMeshSize() {
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  const aspectVideo = vw / vh;
+  const aspectWindow = window.innerWidth / window.innerHeight;
+  const halfView = document.getElementById('halfViewToggle').checked;
+  let displayWidth, displayHeight;
+  if (halfView) {
+    const halfAspect = (vw / 2) / vh;
+    if (halfAspect > aspectWindow) {
+      displayWidth = window.innerWidth;
+      displayHeight = displayWidth / halfAspect;
+    } else {
+      displayHeight = window.innerHeight;
+      displayWidth = displayHeight * halfAspect;
+    }
+    mesh.geometry.attributes.uv.array.set([
+      0.0, 1.0,
+      0.5, 1.0,
+      0.0, 0.0,
+      0.5, 0.0
+    ]);
+    mesh.geometry.attributes.uv.needsUpdate = true;
+    mesh.scale.set(displayWidth, displayHeight, 1);
+    mesh.position.set(0, 0, 0);
+  } else {
+    if (aspectVideo > aspectWindow) {
+      displayWidth = window.innerWidth;
+      displayHeight = displayWidth / aspectVideo;
+    } else {
+      displayHeight = window.innerHeight;
+      displayWidth = displayHeight * aspectVideo;
+    }
+    mesh.geometry.attributes.uv.array.set([
+      0.0, 1.0,
+      1.0, 1.0,
+      0.0, 0.0,
+      1.0, 0.0
+    ]);
+    mesh.geometry.attributes.uv.needsUpdate = true;
+    mesh.scale.set(displayWidth, displayHeight, 1);
+    mesh.position.set(0, 0, 0);
+  }
+}
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+document.getElementById('videoInput').addEventListener('change', function (event) {
+      if (video) {
+        video.pause();
+        video.src = '';
+        video.load();
+        video.remove();
+        video = null;
+      }
+      if (texture) {
+        texture.dispose();
+        texture = null;
+      }
+      if (mesh) {
+        scene.remove(mesh);
+        mesh.geometry.dispose();
+        mesh.material.dispose();
+        mesh = null;
+      }
+      const file = event.target.files[0];
+      if (!file) return;
+      document.getElementById('centerText').style.display = 'none';
+      video = document.createElement('video');
+      video.src = URL.createObjectURL(file);
+      video.crossOrigin = 'anonymous';
+      video.loop = document.getElementById('loopToggle').checked;
+      video.muted = false;
+      video.playsInline = true;
+      video.controls = true;
+      video.autoplay = true;
+      video.addEventListener('play', () => {
+        document.getElementById('playBtn').textContent = '⏸️';
+      });
+      video.addEventListener('pause', () => {
+        document.getElementById('playBtn').textContent = '▶️';
+      });
+      video.addEventListener('loadedmetadata', () => {
+        texture = new THREE.VideoTexture(video);
+        texture.encoding = THREE.sRGBEncoding;
+        texture.colorSpace = THREE.SRGBColorSpace; 
+        texture.generateMipmaps = false;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        if ('requestVideoFrameCallback' in video) {
+          const updateVideoTexture = (now, metadata) => {
+            texture.needsUpdate = true;
+            video.requestVideoFrameCallback(updateVideoTexture);
+          };
+          video.requestVideoFrameCallback(updateVideoTexture);
+        }
+        const material = new THREE.MeshBasicMaterial({ map: texture });
+        const geometry = new THREE.PlaneGeometry(1, 1);
+        mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        updateMeshSize();
+      });
+      video.addEventListener('timeupdate', () => {
+        const percent = (video.currentTime / video.duration) * 100;
+        document.getElementById('seekBar').value = percent;
+        const timeDisplay = document.getElementById('timeDisplay');
+        const current = formatTime(video.currentTime);
+        const total = formatTime(video.duration);
+        timeDisplay.textContent = `${current} / ${total}`;
+      });
+      video.play();
+    });
+document.getElementById('playBtn').addEventListener('click', () => {
+  if (!video) return;
+  if (video.paused) {
+    video.play();
+  } else {
+    video.pause();
+  }
+});
+
+document.getElementById('seekBar').addEventListener('input', (e) => {
+  if (video) {
+    const percent = e.target.value / 100;
+    video.currentTime = percent * video.duration;
+  }
+});
+function formatTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('videoInput');
+  input.value = '';
+});
+  </script>
+</body>
+</html>
