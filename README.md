@@ -17,6 +17,9 @@ Three.js
 - **R800ZZ VR Player for PICO 4 Ultra/PICO 4** https://vr180g.com/pico/vrplayer.php?l=en
 - **R800ZZ SBS Video Player for Windows** https://vr180g.com/r800zzplayer/r800zzplayer.php?l=en
 
+## Version
+0.3 — There are some differences compared to the official online site version (such as whether PHP is used).
+
 # Web application. Run in web bowser
 The web application is available at vr180g.com  
 - English https://vr180g.com/videoplayer/videoplayer_webgl.php?l=en  
