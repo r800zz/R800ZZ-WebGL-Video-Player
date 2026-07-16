@@ -28,4 +28,20 @@ The web application is available at vr180g.com
 - ภาษาไทย https://vr180g.com/videoplayer/videoplayer_webgl.php?l=th  
 - 中文 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=cn  
 - 한국어 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=kr   
-- 日本語 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=jp   
+- 日本語 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=jp
+
+## Files
+- English: videoplayer_webgl_en.html  
+- Spanish: videoplayer_webgl_es.html  
+- Japanese: videoplayer_webgl_ja.html  
+- Korean: videoplayer_webgl_ko.html  
+- Russian: videoplayer_webgl_ru.html  
+- Thai: videoplayer_webgl_th.html  
+- Chinese: videoplayer_webgl_zh.html
+
+## Multilingual Processing
+This repository distributes one HTML file for each language.  
+The original source code is a single PHP file that outputs HTML for each language.  
+The PHP source code is not currently published.  
+Unless there are special circumstances, PHP is not considered necessary.
+
