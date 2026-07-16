@@ -6,7 +6,7 @@ The web application is available at vr180g.com
 English https://vr180g.com/videoplayer/videoplayer_webgl.php?l=en  
 Русский https://vr180g.com/videoplayer/videoplayer_webgl.php?l=ru  
 Español https://vr180g.com/videoplayer/videoplayer_webgl.php?l=es  
-ภาษาไทย https://vr180g.com/videoplayer/videoplayer_webgl.php?l=th 
-中文 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=cn
-한국어 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=kr 
-日本語 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=jp  
+ภาษาไทย https://vr180g.com/videoplayer/videoplayer_webgl.php?l=th  
+中文 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=cn  
+한국어 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=kr   
+日本語 https://vr180g.com/videoplayer/videoplayer_webgl.php?l=jp   
