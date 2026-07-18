@@ -41,9 +41,10 @@ The web application is available at vr180g.com
 - Thai: videoplayer_webgl_th.html  
 - Chinese: videoplayer_webgl_zh.html
 
-## How to Use Offline
-On desktop operating systems, this can be used offline.  
-(It may not work on mobile OS.)  
+## How to Use Locally
+The current source loads Three.js online.  
+To use Three.js offline, you need to install it locally and change the path in the HTML import map.  
+I do not provide an example of how to modify the import map in this README.
 
 For example, if you place the HTML file in `"C:\web\"` on Microsoft Windows 11,  
 you can access it by entering the following in the web browser’s URL bar:  
@@ -52,6 +53,8 @@ you can access it by entering the following in the web browser’s URL bar:
 On Microsoft Windows with Edge/Chrome, you can also enter:  
 `C:\web\videoplayer_webgl_en.html`
 
+When trying to access a local file by entering its URL on an Android-based OS (I have not tested this myself):  
+`file:///storage/emulated/0/web/videoplayer_webgl_en.html`
 
 ## Multilingual Processing
 This repository distributes one HTML file for each language.  
