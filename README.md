@@ -22,7 +22,7 @@ Three.js
 ## Version
 0.3 — There are some differences compared to the official online site version (such as whether PHP is used).
 
-# Web application. Run in web bowser
+# Web application. Run in web browser
 The web application is available at vr180g.com  
 - English https://vr180g.com/videoplayer/videoplayer_webgl.php?l=en  
 - Русский https://vr180g.com/videoplayer/videoplayer_webgl.php?l=ru  
